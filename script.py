@@ -1,7 +1,35 @@
 import argparse
-import os
 import sqlite3
 from sqlite3 import Error
+import os
+from dataclasses import dataclass
+
+
+@dataclass
+class Record:
+    firstname: str
+    telephone_number: str
+    email: str
+    password: str
+    role: str
+    created_at: str
+    children: str
+
+    def __init__(self, firstname, telephone_number, email, password, role, created_at, children=""):
+        self.firstname = firstname
+        self.telephone_number = telephone_number
+        self.email = email
+        self.password = password
+        self.role = role
+        self.created_at = created_at
+        self.children = children
+
+    def __repr__(self):
+        return f"Record: (name:{self.firstname}, email:{self.email})"
+
+    def to_array(self):
+        return [self.firstname, self.telephone_number, self.email, self.password, self.role, self.created_at,
+                self.children]
 
 
 def help():
@@ -30,7 +58,7 @@ def create_database(datafile_paths):
         print(e)
     finally:
         create_table(conn)
-        # add_data_to_database(conn, datafile_paths)
+        add_data_to_database(conn, datafile_paths)
         return conn
 
 
@@ -49,6 +77,44 @@ def create_table(conn):
         cursor.execute(sql)
     except Error as e:
         print(f'Error while creating the database: {e}')
+
+
+def get_all_data(paths):
+    data = []
+    for path in paths:
+        print(path)
+        # if path[-3:] == "csv":
+        with open(path) as f:
+            # lines = f.readlines()[1:]
+            lines = f.read().split("\n")[1:]
+            print(lines)
+            for line in lines:
+                split_line = line[:-1].split(";")
+                # print(split_line)
+                if len(split_line) == 6:
+                    record = Record(split_line[0], split_line[1], split_line[2], split_line[3], split_line[4], split_line[5])
+                else:
+                    record = Record(split_line[0], split_line[1], split_line[2], split_line[3], split_line[4], split_line[5], split_line[6])
+
+                # print(record)
+                data.append(record)
+            break
+
+    return data
+
+
+def add_data_to_database(conn, paths):
+    data = get_all_data(paths)
+    print(data)
+
+    # sql = """INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, children) VALUES(?,
+    #         ?,?,?,?,?,?) """
+    #
+    # try:
+    #     cursor = conn.cursor()
+    #     cursor.execute(sql)
+    # except Error as e:
+    #     print(e)
 
 
 def get_all_datafiles_paths(dir_path):
