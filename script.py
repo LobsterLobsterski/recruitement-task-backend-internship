@@ -20,18 +20,23 @@ def get_args():
     return args
 
 
-if __name__ == '__main__':
-
+def create_database():
     db = Database(r'data')
     db.create_database()
     db.test_database()
 
+    return db
+
+
+if __name__ == '__main__':
+
     passed_args = get_args()
 
     try:
-        globals()[passed_args.method]()
+        db = globals()[passed_args.method]()
     except KeyError:
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists. Try using the help method ("
               f"e.g. python main.py help)")
 
-    db.close_connection()
+    if db is not None:
+        db.close_connection()
