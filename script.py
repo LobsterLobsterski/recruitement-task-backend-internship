@@ -1,35 +1,11 @@
 import argparse
+import os
 import sqlite3
 from sqlite3 import Error
-import os
-from dataclasses import dataclass
 
-
-@dataclass
-class Record:
-    firstname: str
-    telephone_number: str
-    email: str
-    password: str
-    role: str
-    created_at: str
-    children: str
-
-    def __init__(self, firstname, telephone_number, email, password, role, created_at, children=""):
-        self.firstname = firstname
-        self.telephone_number = telephone_number
-        self.email = email
-        self.password = password
-        self.role = role
-        self.created_at = created_at
-        self.children = children
-
-    def __repr__(self):
-        return f"Record: (name:{self.firstname}, email:{self.email})"
-
-    def to_array(self):
-        return [self.firstname, self.telephone_number, self.email, self.password, self.role, self.created_at,
-                self.children]
+from Readers.CsvReader import CsvReader
+from Readers.JsonReader import JsonReader
+from Readers.XmlReader import XmlReader
 
 
 def help():
@@ -53,7 +29,6 @@ def create_database(datafile_paths):
     conn = None
     try:
         conn = sqlite3.connect(":memory:")
-        print(sqlite3.version)
     except Error as e:
         print(e)
     finally:
@@ -63,49 +38,61 @@ def create_database(datafile_paths):
 
 
 def create_table(conn):
-    sql = """ CREATE TABLE IF NOT EXISTS Users (
-                firstname text NOT NULL,
-                telephone_number text PRIMARY KEY,
-                email text NOT NULL,
-                password text NOT NULL,
-                role text NOT NULL,
-                created_at text NOT NULL,
-                children text
-            ); """
+    sql1 = """ CREATE TABLE IF NOT EXISTS user
+                (
+                  firstname text NOT NULL,
+                  telephone_number text NOT NULL,
+                  email text NOT NULL,
+                  password text NOT NULL,
+                  role text NOT NULL,
+                  created_at text NOT NULL,
+                  id INT NOT NULL,
+                  PRIMARY KEY (id)
+                );"""
+
+    sql2 = """CREATE TABLE IF NOT EXISTS child
+                (
+                  id INT NOT NULL,
+                  name text NOT NULL,
+                  age INT NOT NULL,
+                  parent_id INT NOT NULL,
+                  PRIMARY KEY (id),
+                  FOREIGN KEY (parent_id) REFERENCES user(id)
+                );"""
     try:
         cursor = conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql1)
+        cursor.execute(sql2)
     except Error as e:
         print(f'Error while creating the database: {e}')
 
 
 def get_all_data(paths):
     data = []
+    print(paths)
     for path in paths:
-        print(path)
-        # if path[-3:] == "csv":
-        with open(path) as f:
-            # lines = f.readlines()[1:]
-            lines = f.read().split("\n")[1:]
-            print(lines)
-            for line in lines:
-                split_line = line[:-1].split(";")
-                # print(split_line)
-                if len(split_line) == 6:
-                    record = Record(split_line[0], split_line[1], split_line[2], split_line[3], split_line[4], split_line[5])
-                else:
-                    record = Record(split_line[0], split_line[1], split_line[2], split_line[3], split_line[4], split_line[5], split_line[6])
+        # path = paths[1]
+        reader = None
 
-                # print(record)
-                data.append(record)
-            break
+        if path[-3:] == "csv":
+            reader = CsvReader(path)
+
+        elif path[-4:] == "json":
+            reader = JsonReader(path)
+
+        elif path[-3:] == "xml":
+            reader = XmlReader(path)
+
+        data += reader.read()
+
+        # break
 
     return data
 
 
 def add_data_to_database(conn, paths):
     data = get_all_data(paths)
-    print(data)
+    print(f"ALL DATA: {data}")
 
     # sql = """INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, children) VALUES(?,
     #         ?,?,?,?,?,?) """
