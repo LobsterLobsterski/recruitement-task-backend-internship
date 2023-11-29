@@ -67,11 +67,11 @@ def create_table(conn):
         print(f'Error while creating the database: {e}')
 
 
-def get_all_data(paths):
+def read_datafiles(paths):
     data = []
     print(paths)
     for path in paths:
-        # path = paths[1]
+        # path = paths[0]
         reader = None
 
         if path[-3:] == "csv":
@@ -84,14 +84,13 @@ def get_all_data(paths):
             reader = XmlReader(path)
 
         data += reader.read()
-
         # break
 
     return data
 
 
 def add_data_to_database(conn, paths):
-    data = get_all_data(paths)
+    data = read_datafiles(paths)
     print(f"ALL DATA: {data}")
 
     # sql = """INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, children) VALUES(?,
@@ -121,8 +120,6 @@ if __name__ == '__main__':
     create_database(datafile_paths)
 
     passed_args = get_args()
-    # print(f"passed args:{passed_args}")
-    # print({'login': passed_args.login, 'password': passed_args.password})
 
     try:
         globals()[passed_args.method]()

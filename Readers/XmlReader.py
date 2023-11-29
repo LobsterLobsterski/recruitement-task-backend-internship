@@ -1,9 +1,11 @@
-from User import User
-from Child import Child
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree as ElementTree
+
+from Dataclasses.Child import Child
+from Readers.Reader import Reader
+from Dataclasses.User import User
 
 
-class XmlReader:
+class XmlReader(Reader):
     file_path = ''
 
     def __init__(self, file_path):
@@ -13,11 +15,11 @@ class XmlReader:
         print("------------XML READER")
         data = []
 
-        tree = et.parse(self.file_path)
+        tree = ElementTree.parse(self.file_path)
         root = tree.getroot()
-        xml_array = []
 
         for x in root.findall('user'):
+            xml_array = []
             child = ''
             for elem in x.iter():
                 if elem.tag == 'user' or elem.tag == 'children' or elem.tag == 'child':
@@ -34,8 +36,15 @@ class XmlReader:
                 xml_array.append(elem.text)
 
             children = self.__get_children(xml_array[6:])
-            data.append(User(xml_array[0], xml_array[1], xml_array[2], xml_array[3], xml_array[4], xml_array[5], children))
-            xml_array = []
+
+            if xml_array[1] == '' or not self.is_email_valid(xml_array[2]):
+                # print(f"\t bad record: phone={xml_array[1]}, mail={xml_array[2]}")
+                continue
+
+            # print("\tgood record")
+            phone_num = self.validate_phone_numbers(xml_array[1])
+
+            data.append(User(xml_array[0], phone_num, xml_array[2], xml_array[3], xml_array[4], xml_array[5], children))
 
         return data
 

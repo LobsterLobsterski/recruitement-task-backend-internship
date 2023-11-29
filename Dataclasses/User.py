@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import Child
+import Dataclasses.Child as Child
 from typing import List
 
 @dataclass
@@ -22,7 +22,8 @@ class User:
         self.children = children
 
     def __repr__(self):
-        return f"\nRecord: (name:{self.firstname}, email:{self.email}, children: {self.children})"
+        return f"\nRecord: (name:{self.firstname}, phone_num: {self.telephone_number}, email:{self.email}, " \
+               f"children: {self.children})"
 
     def to_array(self):
         return [self.firstname, self.telephone_number, self.email, self.password, self.role, self.created_at,
