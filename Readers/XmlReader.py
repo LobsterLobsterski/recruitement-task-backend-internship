@@ -12,7 +12,6 @@ class XmlReader(Reader):
         self.file_path = file_path
 
     def read(self):
-        print("------------XML READER")
         data = []
 
         tree = ElementTree.parse(self.file_path)

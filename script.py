@@ -38,7 +38,7 @@ def create_database(datafile_paths):
 
 
 def create_table(conn):
-    sql1 = """ CREATE TABLE IF NOT EXISTS user
+    sql1 = """ CREATE TABLE IF NOT EXISTS Users
                 (
                   firstname text NOT NULL,
                   telephone_number text NOT NULL,
@@ -50,7 +50,7 @@ def create_table(conn):
                   PRIMARY KEY (id)
                 );"""
 
-    sql2 = """CREATE TABLE IF NOT EXISTS child
+    sql2 = """CREATE TABLE IF NOT EXISTS Children
                 (
                   id INT NOT NULL,
                   name text NOT NULL,
@@ -69,7 +69,6 @@ def create_table(conn):
 
 def read_datafiles(paths):
     data = []
-    print(paths)
     for path in paths:
         # path = paths[0]
         reader = None
@@ -91,16 +90,37 @@ def read_datafiles(paths):
 
 def add_data_to_database(conn, paths):
     data = read_datafiles(paths)
-    print(f"ALL DATA: {data}")
+    # print(f"ALL DATA: {data}")
+    parent_id = 0
+    child_id = 0
+    for user in data:
 
-    # sql = """INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, children) VALUES(?,
-    #         ?,?,?,?,?,?) """
-    #
-    # try:
-    #     cursor = conn.cursor()
-    #     cursor.execute(sql)
-    # except Error as e:
-    #     print(e)
+        user_sql = f"INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, id) " \
+                    f"VALUES('{user.firstname}', '{user.telephone_number}', '{user.email}', '{user.password}', " \
+                    f"'{user.role}', '{user.created_at}', {parent_id})"
+
+        try:
+            cursor = conn.cursor()
+            cursor.execute(user_sql)
+            conn.commit()
+
+            for child in user.children:
+                try:
+                    child_sql = f"INSERT INTO Children(id, name, age, parent_id) " \
+                                f"VALUES({child_id}, '{child.name}', {child.age}, {parent_id})"
+                    cursor.execute(child_sql)
+                    conn.commit()
+                except Error as e:
+                    print(f"Error while inserting child data: {user}\nError: {e}")
+                child_id += 1
+
+            cursor.close()
+        except Error as e:
+            print(f"Error while inserting user data: {user}\nError: {e}")
+
+        parent_id += 1
+
+    print("all data inserted")
 
 
 def get_all_datafiles_paths(dir_path):
@@ -115,7 +135,6 @@ if __name__ == '__main__':
 
     datafile_paths = []
     get_all_datafiles_paths(r'data')
-    print(datafile_paths)
 
     create_database(datafile_paths)
 

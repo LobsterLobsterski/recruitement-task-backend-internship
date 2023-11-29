@@ -11,7 +11,6 @@ class CsvReader(Reader):
 
     def read(self):
         with open(self.file_path) as f:
-            print("------------CSV READER")
             data = []
             lines = f.read().split("\n")[1:]
             for line in lines:
