@@ -93,6 +93,7 @@ def add_data_to_database(conn, paths):
     # print(f"ALL DATA: {data}")
     parent_id = 0
     child_id = 0
+
     for user in data:
 
         user_sql = f"INSERT INTO Users(firstname, telephone_number, email, password, role, created_at, id) " \
@@ -131,12 +132,27 @@ def get_all_datafiles_paths(dir_path):
             get_all_datafiles_paths(os.path.join(dir_path, path))
 
 
+def test_that_data_has_been_successfully_saved(conn):
+    sql = """SELECT * from Users WHERE id=0
+    """
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        records = cursor.fetchall()
+        assert records[0] == ('Tanner', '604020303', 'lowerykimberly@example.net', '6mKY!nP^+y', 'admin', '2023-08-27 23:36:00', 0)
+        cursor.close()
+    except Error as e:
+        print(f"Error while getting data: {e}")
+
+
 if __name__ == '__main__':
 
     datafile_paths = []
     get_all_datafiles_paths(r'data')
 
-    create_database(datafile_paths)
+    conn = create_database(datafile_paths)
+
+    test_that_data_has_been_successfully_saved(conn)
 
     passed_args = get_args()
 
@@ -145,3 +161,5 @@ if __name__ == '__main__':
     except KeyError:
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists. Try using the help method ("
               f"e.g. python main.py help)")
+
+    conn.close()
