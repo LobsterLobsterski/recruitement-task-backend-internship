@@ -11,10 +11,14 @@ from Readers.XmlReader import XmlReader
 
 class Database:
     datafile_paths = []
-    conn=None
+    conn = None
 
-    def __init__(self, dir_path):
-        self.get_all_datafiles_paths(dir_path)
+    def __init__(self, dir_path=None):
+        if dir_path is not None:
+            self.get_all_datafiles_paths(dir_path)
+        else:
+            self.__establish_connection()
+
 
     def get_all_datafiles_paths(self, dir_path):
         for path in os.listdir(dir_path):
@@ -25,7 +29,7 @@ class Database:
 
     def create_database(self):
         try:
-            self.conn = sqlite3.connect(":memory:")
+            self.conn = sqlite3.connect(r"database.sql")
         except Error as e:
             print(f"Error while creating the database: {e}")
         finally:
@@ -160,7 +164,18 @@ class Database:
 
         return children
 
+    def count_all_accounts(self):
+        sql = """SELECT count(*) from Users"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            return records[0][0]
 
+        except Error as e:
+            print(f"Error while counting user accounts data: {e}")
+
+        return -1
 
     def test_database(self):
         self.__test_that_data_has_been_successfully_saved()
@@ -188,6 +203,12 @@ class Database:
 
     def close_connection(self):
         self.conn.close()
+
+    def __establish_connection(self):
+        try:
+            self.conn = sqlite3.connect(r"database.sql")
+        except Error as e:
+            print(f"Error while connecting to the database: {e}")
 
 
 
