@@ -28,15 +28,23 @@ def create_database():
     return db
 
 
+def validate_login_info(login, password):
+    user = db.find_user(login, password)
+    print(user)
+
+
 if __name__ == '__main__':
 
     passed_args = get_args()
 
     try:
         db = globals()[passed_args.method]()
+
     except KeyError:
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists. Try using the help method ("
               f"e.g. python main.py help)")
+
+    validate_login_info(passed_args.login, passed_args.password)
 
     if db is not None:
         db.close_connection()
