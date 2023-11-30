@@ -15,8 +15,11 @@ class Database:
 
     def __init__(self, *args):
         if len(args) != 0:
-            self.get_all_datafiles_paths(args[0])
+            # print("Database created")
+            self.get_all_datafiles_paths(r'data')
+            self.create_database()
         else:
+            # print("Connecting to the database")
             if self.does_database_exists():
                 self.__establish_connection()
 
@@ -32,6 +35,8 @@ class Database:
         for path in os.listdir(r"C:\Users\tomas\Desktop\recruitement-task-backend-internship"):
             if path == "database.sql":
                 return True
+
+        return False
 
     def create_database(self):
         if self.does_database_exists():
@@ -82,6 +87,9 @@ class Database:
     def __add_data_to_database(self):
         data = self.__read_datafiles()
 
+        for x in data:
+            print(x.children if x.children != [] else '')
+
         parent_id = 0
         child_id = 0
 
@@ -112,7 +120,7 @@ class Database:
 
             parent_id += 1
 
-        print("all data inserted")
+        # print("all data inserted")
 
     def __read_datafiles(self):
         data = []
@@ -254,7 +262,7 @@ class Database:
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
 
-    def test_database(self):
+    def test_database(self, *args):
         self.__test_that_data_has_been_successfully_saved()
 
     def __test_that_data_has_been_successfully_saved(self):

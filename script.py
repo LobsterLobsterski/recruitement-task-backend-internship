@@ -27,14 +27,15 @@ if __name__ == '__main__':
 
     passed_args = get_args()
     db = None
+    actionType = 'UserActions'
+    current_user = None
+
     if Database.does_database_exists():
         db = Database()
         current_user = validate_login_info(passed_args.login, passed_args.password)
 
         if current_user.role == 'admin':
             actionType = 'AdminActions'
-        else:
-            actionType = 'UserActions'
 
     try:
         method = passed_args.method.replace("-", "_")
@@ -49,8 +50,6 @@ if __name__ == '__main__':
     except KeyError and AttributeError as e:
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists or you don't have access to it."
               f"Try using the help method (e.g. python script.py help ...)")
-
-        print(e)
 
 
 
