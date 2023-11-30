@@ -1,5 +1,7 @@
 import argparse
 
+from Actions.AdminActions import AdminActions
+from Actions.UserActions import UserActions
 from Database import Database
 
 
@@ -38,6 +40,7 @@ if __name__ == '__main__':
                   "...\033[0m")
             exit()
 
+        # print(current_user)
         actionClass = globals()[actionType]
         getattr(actionClass, method)(db, current_user)
 
