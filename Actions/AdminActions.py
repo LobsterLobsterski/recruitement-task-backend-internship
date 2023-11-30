@@ -2,14 +2,20 @@ from Actions.UserActions import UserActions
 
 
 class AdminActions(UserActions):
+    @staticmethod
+    def help(*args):
+        UserActions.help(args)
+        print(f"""
+        List of all admin exclusive commands:
+            print-all-accounts          - displays all user accounts
+            print-oldest-account        - displays the oldest account in the database
+            group-by-age                - displays information about how many children of each age there are in the database
+            """)
 
     @staticmethod
     def print_all_accounts(*args):
         database = args[0]
         num_of_records = database.count_all_accounts()
-        if num_of_records == -1:
-            print("\033[1mTry create_database method e.g. python script.py create_database ...\033[0m")
-            return
         print(num_of_records)
 
     @staticmethod

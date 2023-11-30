@@ -145,6 +145,7 @@ class Database:
 
         except Error as e:
             print(f"Error while finding user: {e}")
+            return
 
         if len(records) == 1:
             children = self.get_children_by_parent_id(records[0][6])
@@ -166,7 +167,7 @@ class Database:
 
         except Error as e:
             print(f"Error while finding children of user{parent_id}: {e}")
-            return -1
+            return
 
         children = []
         for child_array in records:
@@ -185,8 +186,6 @@ class Database:
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
 
-        return -1
-
     def get_oldest_account(self):
         sql = """SELECT * from Users ORDER BY created_at ASC LIMIT 1"""
         try:
@@ -198,8 +197,6 @@ class Database:
 
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
-
-        return -1
 
     def group_children_by_age(self):
         sql = """SELECT age, COUNT(*) AS count_of_children
@@ -215,8 +212,6 @@ class Database:
 
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
-
-        return -1
 
     def find_similar_children_by_age(self, user):
         sql = f"""SELECT
@@ -261,7 +256,6 @@ class Database:
 
     def test_database(self):
         self.__test_that_data_has_been_successfully_saved()
-    #     other tests
 
     def __test_that_data_has_been_successfully_saved(self):
         sql = """SELECT * from Users WHERE id=0

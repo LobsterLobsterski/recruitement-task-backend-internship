@@ -1,9 +1,12 @@
 class UserActions:
-
     @staticmethod
     def help(*args):
-        # prints all commands
-        print("todo: prints all cmd commands")
+        print(f"""
+        List of all user commands:
+            print-children                  - displays data about your children
+            find-similar-children-by-age    - displays the name, phone number and children of all users who have children of similar age to yours
+            help                            - displays all available commands
+        """)
 
     @staticmethod
     def print_children(*args):

@@ -46,9 +46,9 @@ if __name__ == '__main__':
         actionClass = globals()[actionType]
         getattr(actionClass, method)(db, current_user)
 
-    except KeyError as e:
-        print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists. Try using the help method ("
-              f"e.g. python main.py help)")
+    except KeyError and AttributeError as e:
+        print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists or you don't have access to it."
+              f"Try using the help method (e.g. python script.py help ...)")
 
         print(e)
 
