@@ -145,7 +145,6 @@ class Database:
 
         except Error as e:
             print(f"Error while finding user: {e}")
-            return -1
 
         if len(records) == 1:
             children = self.get_children_by_parent_id(records[0][6])
@@ -153,10 +152,9 @@ class Database:
 
         elif len(records) == 0:
             print("Invalid Login")
-            return -1
+
         else:
             print("found many users with that info :(")
-            return -1
 
     def get_children_by_parent_id(self, parent_id):
         sql = f"SELECT name, age, id FROM Children WHERE parent_id={parent_id}"
@@ -219,6 +217,47 @@ class Database:
             print(f"Error while counting user accounts data: {e}")
 
         return -1
+
+    def find_similar_children_by_age(self, user):
+        sql = f"""SELECT
+                    u.firstname AS user_firstname,
+                    u.telephone_number AS user_telephone_number,
+                    u.email AS user_email,
+                    u.password AS user_password,
+                    u.role AS user_role,
+                    u.created_at AS user_created_at,
+                    u.id AS user_id
+                FROM
+                    Users u
+                INNER JOIN
+                    Children c ON u.id = c.parent_id
+                WHERE
+                    u.id <> {user.id}
+                    AND EXISTS (
+                        SELECT 1
+                        FROM Children uc
+                        WHERE uc.parent_id = u.id
+                        AND ABS(uc.age - (SELECT age FROM Children WHERE parent_id = {user.id})) <= 1
+                    )
+                GROUP BY
+                    u.id
+                ORDER BY
+                    u.firstname;
+                """
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            users = []
+
+            for record in records:
+                children = self.get_children_by_parent_id(record[6])
+                users.append(User.from_array(record[:7], children))
+
+            return users
+
+        except Error as e:
+            print(f"Error while counting user accounts data: {e}")
 
     def test_database(self):
         self.__test_that_data_has_been_successfully_saved()

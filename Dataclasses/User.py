@@ -32,6 +32,9 @@ class User:
         return [self.firstname, self.telephone_number, self.email, self.password, self.role, self.created_at,
                 self.children]
 
+    def __hash__(self):
+        return hash(f"{self.firstname}{self.telephone_number}{self.email}{self.role}{self.created_at}{self.children}")
+
     @staticmethod
     def from_array(array, children):
         return User(array[0], array[1], array[2], array[3], array[4], array[5], children, array[6])

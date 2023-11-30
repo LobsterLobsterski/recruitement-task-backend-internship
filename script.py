@@ -18,6 +18,8 @@ def get_args():
 
 def validate_login_info(login, password):
     logged_in_user = db.find_user(login, password)
+    if logged_in_user is None:
+        exit()
     return logged_in_user
 
 
@@ -28,6 +30,7 @@ if __name__ == '__main__':
     if Database.does_database_exists():
         db = Database()
         current_user = validate_login_info(passed_args.login, passed_args.password)
+
         if current_user.role == 'admin':
             actionType = 'AdminActions'
         else:
@@ -40,7 +43,6 @@ if __name__ == '__main__':
                   "...\033[0m")
             exit()
 
-        # print(current_user)
         actionClass = globals()[actionType]
         getattr(actionClass, method)(db, current_user)
 

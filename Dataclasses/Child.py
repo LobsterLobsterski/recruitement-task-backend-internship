@@ -18,3 +18,6 @@ class Child:
 
     def __repr__(self):
         return f"Child(name:{self.name}, age:{self.age})"
+
+    def __hash__(self):
+        return hash(f"{self.name}{self.age}{self.id}")
