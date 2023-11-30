@@ -32,6 +32,11 @@ def print_oldest_account():
     print(db.get_oldest_account())
 
 
+def group_by_age():
+    for age, count in db.group_children_by_age():
+        print(f"age: {age}, count: {count}")
+
+
 def create_database():
     db = Database(r'data')
     db.create_database()

@@ -203,6 +203,23 @@ class Database:
 
         return -1
 
+    def group_children_by_age(self):
+        sql = """SELECT age, COUNT(*) AS count_of_children
+                 FROM Children
+                 GROUP BY age
+                 ORDER BY count_of_children;
+              """
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            return records
+
+        except Error as e:
+            print(f"Error while counting user accounts data: {e}")
+
+        return -1
+
     def test_database(self):
         self.__test_that_data_has_been_successfully_saved()
     #     other tests
