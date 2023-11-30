@@ -13,11 +13,12 @@ class Database:
     datafile_paths = []
     conn = None
 
-    def __init__(self, dir_path=None):
-        if dir_path is not None:
-            self.get_all_datafiles_paths(dir_path)
+    def __init__(self, *args):
+        if len(args) != 0:
+            self.get_all_datafiles_paths(args[0])
         else:
-            self.__establish_connection()
+            if self.does_database_exists():
+                self.__establish_connection()
 
 
     def get_all_datafiles_paths(self, dir_path):
@@ -27,12 +28,16 @@ class Database:
             else:
                 self.get_all_datafiles_paths(os.path.join(dir_path, path))
 
-    def create_database(self):
+    @staticmethod
+    def does_database_exists():
         for path in os.listdir(r"C:\Users\tomas\Desktop\recruitement-task-backend-internship"):
             if path == "database.sql":
-                print("database is already established")
-                self.__establish_connection()
-                return self
+                return True
+
+    def create_database(self):
+        if self.does_database_exists():
+            self.__establish_connection()
+            return self
 
         open("database.sql", "x")
 

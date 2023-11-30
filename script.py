@@ -39,16 +39,26 @@ def validate_login_info(login, password):
 
 def print_all_accounts():
     num_of_records = db.count_all_accounts()
+    if num_of_records == -1:
+        print("\033[1mTry create_database method e.g. python script.py create_database ...\033[0m")
+        return
     print(num_of_records)
 
 
 if __name__ == '__main__':
 
     passed_args = get_args()
-    db = get_database_object()
+    if Database.does_database_exists():
+        db = get_database_object()
+        current_user = validate_login_info(passed_args.login, passed_args.password)
 
     try:
         method = (passed_args.method).replace("-", "_")
+        if method != "create_database" and db is None:
+            print("CREATE DATABASE FIRST using \033[1mcreate_database method e.g. python script.py create_database "
+                  "...\033[0m")
+            exit()
+
         result = globals()[method]()
         if result is not None:
             db = result
@@ -57,7 +67,7 @@ if __name__ == '__main__':
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists. Try using the help method ("
               f"e.g. python main.py help)")
 
-    current_user = validate_login_info(passed_args.login, passed_args.password)
+
 
 
 
