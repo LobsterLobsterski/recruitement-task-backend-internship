@@ -20,7 +20,6 @@ class Database:
             if self.does_database_exists():
                 self.__establish_connection()
 
-
     def get_all_datafiles_paths(self, dir_path):
         for path in os.listdir(dir_path):
             if os.path.isfile(os.path.join(dir_path, path)):
@@ -184,6 +183,20 @@ class Database:
             cursor.execute(sql)
             records = cursor.fetchall()
             return records[0][0]
+
+        except Error as e:
+            print(f"Error while counting user accounts data: {e}")
+
+        return -1
+
+    def get_oldest_account(self):
+        sql = """SELECT * from Users ORDER BY created_at ASC LIMIT 1"""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            children = self.get_children_by_parent_id(records[0][6])
+            return User.from_array(records[0], children)
 
         except Error as e:
             print(f"Error while counting user accounts data: {e}")

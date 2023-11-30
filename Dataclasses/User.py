@@ -25,8 +25,8 @@ class User:
         self.id = id
 
     def __repr__(self):
-        return f"\nRecord: (name: {self.firstname}, phone_num: {self.telephone_number}, email: {self.email}, " \
-               f"role: {self.role}, children: {self.children})"
+        return f"Record: (name: {self.firstname}, phone_num: {self.telephone_number}, email: {self.email}, " \
+               f"role: {self.role}, children: {self.children})\n"
 
     def to_array(self):
         return [self.firstname, self.telephone_number, self.email, self.password, self.role, self.created_at,
