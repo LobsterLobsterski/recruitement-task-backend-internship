@@ -28,6 +28,14 @@ class Database:
                 self.get_all_datafiles_paths(os.path.join(dir_path, path))
 
     def create_database(self):
+        for path in os.listdir(r"C:\Users\tomas\Desktop\recruitement-task-backend-internship"):
+            if path == "database.sql":
+                print("database is already established")
+                self.__establish_connection()
+                return self
+
+        open("database.sql", "x")
+
         try:
             self.conn = sqlite3.connect(r"database.sql")
         except Error as e:
