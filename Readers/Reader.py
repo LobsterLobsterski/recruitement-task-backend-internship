@@ -24,3 +24,6 @@ class Reader:
         new_num = str(int(new_num))[:9]
 
         return new_num
+
+    def is_record_initially_invalid(self, record_data):
+        return record_data[1] == '' or not self.is_email_valid(record_data[2])

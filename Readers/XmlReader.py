@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ElementTree
 
 from Dataclasses.Child import Child
-from Readers.Reader import Reader
 from Dataclasses.User import User
+from Readers.Reader import Reader
 
 
 class XmlReader(Reader):
@@ -34,12 +34,11 @@ class XmlReader(Reader):
 
                 xml_array.append(elem.text)
 
-            children = self.__get_children(xml_array[6:])
-
-            if xml_array[1] == '' or not self.is_email_valid(xml_array[2]):
+            if self.is_record_initially_invalid(xml_array):
                 continue
 
             phone_num = self.validate_phone_numbers(xml_array[1])
+            children = self.__get_children(xml_array[6:])
 
             data.append(User(xml_array[0], phone_num, xml_array[2], xml_array[3], xml_array[4], xml_array[5], children))
 

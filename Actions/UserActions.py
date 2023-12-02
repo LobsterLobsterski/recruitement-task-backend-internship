@@ -31,6 +31,7 @@ class UserActions:
     def create_database(*args):
         if not Database.does_database_exists():
             Database(args)
+            print("Database created Successfully")
         else:
             print("The Database already exists, try using help for a list of available commands")
 

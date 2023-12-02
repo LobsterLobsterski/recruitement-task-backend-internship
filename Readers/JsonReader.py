@@ -1,8 +1,8 @@
 import json
 
 from Dataclasses.Child import Child
-from Readers.Reader import Reader
 from Dataclasses.User import User
+from Readers.Reader import Reader
 
 
 class JsonReader(Reader):
@@ -18,7 +18,7 @@ class JsonReader(Reader):
             for line in lines:
                 line = list(line.values())
 
-                if line[1] == '' or not self.is_email_valid(line[2]):
+                if self.is_record_initially_invalid(line):
                     continue
 
                 children = self.__get_children(line[6])

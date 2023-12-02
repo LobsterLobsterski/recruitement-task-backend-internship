@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser
 
 from Actions.AdminActions import AdminActions
 from Actions.UserActions import UserActions
@@ -6,7 +6,7 @@ from Database import Database
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument('--login')
     parser.add_argument('--password')
     parser.add_argument('method')
@@ -17,7 +17,7 @@ def get_args():
 
 
 def validate_login_info(login, password):
-    logged_in_user = db.find_user(login, password)
+    logged_in_user = db.log_in(login, password)
     if logged_in_user is None:
         exit()
     return logged_in_user
@@ -52,7 +52,7 @@ if __name__ == '__main__':
               f"Try using the help method (e.g. python script.py help ...)")
         print(e)
     finally:
-        db.close_connection()
+        if db is not None: db.close_connection()
 
 
 

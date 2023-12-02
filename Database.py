@@ -2,12 +2,12 @@ import os
 import sqlite3
 from sqlite3 import Error
 
+from DatabaseTests import DatabaseTests
 from Dataclasses.Child import Child
 from Dataclasses.User import User
 from Readers.CsvReader import CsvReader
 from Readers.JsonReader import JsonReader
 from Readers.XmlReader import XmlReader
-from DatabaseTests import DatabaseTests
 
 
 class Database:
@@ -116,8 +116,6 @@ class Database:
 
             parent_id += 1
 
-        # print("all data inserted")
-
     def __read_datafiles(self):
         data = []
         for path in self.datafile_paths:
@@ -137,7 +135,7 @@ class Database:
 
         return data
 
-    def find_user(self, login, password):
+    def log_in(self, login, password):
 
         sql = f"SELECT * FROM Users WHERE password='{password}' AND (telephone_number='{login}' OR email='{login}')"
 
