@@ -17,10 +17,8 @@ class CsvReader(Reader):
                 split_line = line.split(";")
 
                 if split_line[1] == '' or not self.is_email_valid(split_line[2]):
-                    # print(f"\t bad record: phone={split_line[1]}, mail={split_line[2]}")
                     continue
 
-                # print("\tgood record")
                 phone_num = self.validate_phone_numbers(split_line[1])
 
                 if len(split_line) == 6:

@@ -50,6 +50,9 @@ if __name__ == '__main__':
     except KeyError and AttributeError as e:
         print(f"\n ERROR: Function \033[1m{passed_args.method}\033[0m doesn't exists or you don't have access to it."
               f"Try using the help method (e.g. python script.py help ...)")
+        print(e)
+    finally:
+        db.close_connection()
 
 
 

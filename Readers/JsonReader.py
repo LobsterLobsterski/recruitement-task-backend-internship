@@ -19,10 +19,8 @@ class JsonReader(Reader):
                 line = list(line.values())
 
                 if line[1] == '' or not self.is_email_valid(line[2]):
-                    # print(f"\t bad record: phone={line[1]}, mail={line[2]}")
                     continue
 
-                # print("\tgood record")
                 children = self.__get_children(line[6])
                 phone_num = self.validate_phone_numbers(line[1])
 

@@ -24,8 +24,7 @@ class UserActions:
     def find_similar_children_by_age(*args):
         database = args[0]
         user = args[1]
-
-        for record in database.find_similar_children_by_age(user):
+        for record in database.find_similar_children_by_age(user.get_id()):
             print(f"{record.firstname}, {record.telephone_number}: {[str(c.name)+', '+str(c.age) for c in record.children]}")
 
     @staticmethod
@@ -38,7 +37,7 @@ class UserActions:
     @staticmethod
     def test_database(*args):
         database = args[0]
-        database.test_database(args)
+        database.test_database()
 
 
 

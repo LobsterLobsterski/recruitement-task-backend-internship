@@ -21,3 +21,6 @@ class Child:
 
     def __hash__(self):
         return hash(f"{self.name}{self.age}{self.id}")
+
+    def __eq__(self, other):
+        return self.name == other.name and self.age == other.age

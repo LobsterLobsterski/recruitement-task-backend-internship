@@ -7,6 +7,7 @@ from Dataclasses.User import User
 from Readers.CsvReader import CsvReader
 from Readers.JsonReader import JsonReader
 from Readers.XmlReader import XmlReader
+from DatabaseTests import DatabaseTests
 
 
 class Database:
@@ -15,11 +16,9 @@ class Database:
 
     def __init__(self, *args):
         if len(args) != 0:
-            # print("Database created")
             self.get_all_datafiles_paths(r'data')
             self.create_database()
         else:
-            # print("Connecting to the database")
             if self.does_database_exists():
                 self.__establish_connection()
 
@@ -86,9 +85,6 @@ class Database:
 
     def __add_data_to_database(self):
         data = self.__read_datafiles()
-
-        for x in data:
-            print(x.children if x.children != [] else '')
 
         parent_id = 0
         child_id = 0
@@ -221,7 +217,7 @@ class Database:
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
 
-    def find_similar_children_by_age(self, user):
+    def find_similar_children_by_age(self, user_id):
         sql = f"""SELECT
                     u.firstname AS user_firstname,
                     u.telephone_number AS user_telephone_number,
@@ -235,12 +231,12 @@ class Database:
                 INNER JOIN
                     Children c ON u.id = c.parent_id
                 WHERE
-                    u.id <> {user.id}
+                    u.id <> {user_id}
                     AND EXISTS (
                         SELECT 1
                         FROM Children uc
                         WHERE uc.parent_id = u.id
-                        AND ABS(uc.age - (SELECT age FROM Children WHERE parent_id = {user.id})) <= 1
+                        AND ABS(uc.age - (SELECT age FROM Children WHERE parent_id = {user_id})) <= 1
                     )
                 GROUP BY
                     u.id
@@ -262,31 +258,13 @@ class Database:
         except Error as e:
             print(f"Error while counting user accounts data: {e}")
 
-    def test_database(self, *args):
-        self.__test_that_data_has_been_successfully_saved()
-
-    def __test_that_data_has_been_successfully_saved(self):
-        sql = """SELECT * from Users WHERE id=0
-        """
-        try:
-            cursor = self.conn.cursor()
-            cursor.execute(sql)
-            records = cursor.fetchall()
-
-            try:
-                assert records[0] == ('Tanner', '604020303', 'lowerykimberly@example.net', '6mKY!nP^+y', 'admin',
-                                      '2023-08-27 23:36:00', 0)
-                print("\033[0;32m test_that_data_has_been_successfully_saved: SUCCESS \033[0m")
-            except AssertionError as e:
-                print("\033[0;31m test_that_data_has_been_successfully_saved: FAILURE \033[0m")
-            finally:
-                cursor.close()
-
-        except Error as e:
-            print(f"Error while getting data: {e}")
+    def test_database(self):
+        dt = DatabaseTests(self.conn, self)
+        dt.run_all_tests()
 
     def close_connection(self):
         self.conn.close()
+        self.conn = None
 
     def __establish_connection(self):
         try:

@@ -4,7 +4,7 @@ from Actions.UserActions import UserActions
 class AdminActions(UserActions):
     @staticmethod
     def help(*args):
-        UserActions.help(args)
+        super(AdminActions, AdminActions).help(args)
         print(f"""
         List of all admin exclusive commands:
             print-all-accounts          - displays all user accounts

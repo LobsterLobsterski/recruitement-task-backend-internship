@@ -37,10 +37,8 @@ class XmlReader(Reader):
             children = self.__get_children(xml_array[6:])
 
             if xml_array[1] == '' or not self.is_email_valid(xml_array[2]):
-                # print(f"\t bad record: phone={xml_array[1]}, mail={xml_array[2]}")
                 continue
 
-            # print("\tgood record")
             phone_num = self.validate_phone_numbers(xml_array[1])
 
             data.append(User(xml_array[0], phone_num, xml_array[2], xml_array[3], xml_array[4], xml_array[5], children))
